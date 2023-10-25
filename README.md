@@ -21,6 +21,7 @@ This library provides a solution by leveraging the fullscreenCover modifier, ens
 |  <img src="https://github.com/Ryu0118/swift-fullscreen-popup/assets/87907656/c658d3ce-d1a4-4c6f-a2ff-32cdc75d3771" width="200">  |  <img src="https://github.com/Ryu0118/swift-fullscreen-popup/assets/87907656/57622de8-c6c4-4ae2-9b64-1b32f7ae6e99" width="200">  |
 
 ## Usage
+Here’s how you can use it:
 ```Swift
 import SwiftUI
 import FullscreenPopup
@@ -32,9 +33,30 @@ public struct ContentView: View {
             isPopupPresented = true
         }
         .popup(isPresented: $isPopupPresented) {
-            // Your View
+            // Your custom popup content
         }
     }
+}
+```
+
+### Customizing Animation
+You can also customize the animation by providing an animation parameter to the .popup modifier. Here's an example:
+```Swift
+.popup(isPresented: $isPopupPresented, duration: .seconds(0.5), animation: .easeIn(duration: 0.5)) {
+    // Your custom popup content
+}
+```
+> **Warning**
+> The `duration` parameter must be greater than the `duration` of the `animation`.
+
+### Customizing Background
+You can also customize the background view that appears behind the popup. By default, a semi-transparent black view is used. To use a different view, provide a background parameter to the .popup modifier:
+```Swift
+.popup(isPresented: $isExample1Presented) { isPresented in
+    LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .top, endPoint: .bottom)
+        .opacity(isPresented ? 0.5 : 0)
+} content: {
+    // Your custom popup content
 }
 ```
 
