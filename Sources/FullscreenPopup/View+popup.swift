@@ -3,6 +3,8 @@ import SwiftUI
 public extension View {
     /// Presents a popup with customizable content and background.
     ///
+    /// - Note: The `duration` parameter must be greater than the `duration` of the `animation`.
+    ///
     /// - Parameters:
     ///   - isPresented: A binding to a Boolean value that determines whether to present the popup.
     ///   - nanoseconds: The duration of the popup animation in nanoseconds. Default is 350,000,000 nanoseconds.
@@ -30,6 +32,8 @@ public extension View {
     }
 
     /// Presents a popup with customizable content and background.
+    ///
+    /// - Note: The `duration` parameter must be greater than the `duration` of the `animation`.
     ///
     /// - Parameters:
     ///   - isPresented: A binding to a Boolean value that determines whether to present the popup.
@@ -59,6 +63,8 @@ public extension View {
 
     /// Presents a popup with customizable content and background. Available from macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0.
     ///
+    /// - Note: The `duration` parameter must be greater than the `duration` of the `animation`.
+    ///
     /// - Parameters:
     ///   - isPresented: A binding to a Boolean value that determines whether to present the popup.
     ///   - duration: The duration of the popup animation. Default is 0.35 seconds.
@@ -87,6 +93,8 @@ public extension View {
     }
 
     /// Presents a popup with customizable content and background. Available from macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0.
+    ///
+    /// - Note: The `duration` parameter must be greater than the `duration` of the `animation`.
     ///
     /// - Parameters:
     ///   - isPresented: A binding to a Boolean value that determines whether to present the popup.
