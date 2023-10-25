@@ -74,6 +74,7 @@ public extension View {
     ///   - background: A closure returning the background content. The closure takes a Boolean indicating the presentation state.
     /// - Returns: A view with the popup applied.
     @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
+    @_disfavoredOverload
     func popup<Popup: View, Background: View>(
         isPresented: Binding<Bool>,
         duration: Duration = .seconds(0.35),
@@ -105,6 +106,7 @@ public extension View {
     ///   - background: A closure returning the background content. The closure takes a Boolean indicating the presentation state.
     /// - Returns: A view with the popup applied.
     @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
+    @_disfavoredOverload
     func popup<Popup: View, Background: View>(
         isPresented: Binding<Bool>,
         duration: Duration = .seconds(0.35),
