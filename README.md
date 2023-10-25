@@ -18,7 +18,7 @@ This library provides a solution by leveraging the fullscreenCover modifier, ens
 
 |  ZStack or overlay  |  This Library  |
 | ---- | ---- |
-|  <img src="https://github.com/Ryu0118/swift-fullscreen-popup/assets/87907656/c658d3ce-d1a4-4c6f-a2ff-32cdc75d3771" width="200">  |  <img src="https://github.com/Ryu0118/swift-fullscreen-popup/assets/87907656/57622de8-c6c4-4ae2-9b64-1b32f7ae6e99" width="200">  |
+|  <img src="https://github.com/Ryu0118/swift-fullscreen-popup/assets/87907656/9756e921-ba9f-4190-8cb8-0b3b7e1f16a8" width="200">  |  <img src="https://github.com/Ryu0118/swift-fullscreen-popup/assets/87907656/1c1b9478-81e5-491c-86d1-e52e2c8b7fbd" width="200">  |
 
 ## Usage
 Here’s how you can use it:
