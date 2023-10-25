@@ -17,15 +17,15 @@ public extension View {
         isPresented: Binding<Bool>,
         duration nanoseconds: UInt64 = 350_000_000,
         animation: Animation = .spring(duration: 0.3, bounce: 0.25, blendDuration: 0.1),
-        @ViewBuilder popup: @escaping (_ isPresented: Bool) -> Popup,
-        @ViewBuilder background: @escaping (_ isPresented: Bool) -> Background = { Color.black.opacity($0 ? 0.5 : 0) }
+        @ViewBuilder background: @escaping (_ isPresented: Bool) -> Background = { Color.black.opacity($0 ? 0.5 : 0) },
+        @ViewBuilder content: @escaping (_ isPresented: Bool) -> Popup
     ) -> some View {
         modifier(
             PopupModifier(
                 isPresented: isPresented,
                 duration: nanoseconds,
                 animation: animation,
-                popup: popup,
+                popup: content,
                 background: background
             )
         )
@@ -47,15 +47,15 @@ public extension View {
         isPresented: Binding<Bool>,
         duration nanoseconds: UInt64 = 350_000_000,
         animation: Animation = .spring(duration: 0.3, bounce: 0.25, blendDuration: 0.1),
-        @ViewBuilder popup: @escaping () -> Popup,
-        @ViewBuilder background: @escaping (_ isPresented: Bool) -> Background = { Color.black.opacity($0 ? 0.5 : 0) }
+        @ViewBuilder background: @escaping (_ isPresented: Bool) -> Background = { Color.black.opacity($0 ? 0.5 : 0) },
+        @ViewBuilder content: @escaping () -> Popup
     ) -> some View {
         modifier(
             PopupModifier(
                 isPresented: isPresented,
                 duration: nanoseconds,
                 animation: animation,
-                popup: { _ in popup() },
+                popup: { _ in content() },
                 background: background
             )
         )
@@ -79,15 +79,15 @@ public extension View {
         isPresented: Binding<Bool>,
         duration: Duration = .seconds(0.35),
         animation: Animation = .spring(duration: 0.3, bounce: 0.25, blendDuration: 0.1),
-        @ViewBuilder popup: @escaping (_ isPresented: Bool) -> Popup,
-        @ViewBuilder background: @escaping (_ isPresented: Bool) -> Background = { Color.black.opacity($0 ? 0.5 : 0) }
+        @ViewBuilder background: @escaping (_ isPresented: Bool) -> Background = { Color.black.opacity($0 ? 0.5 : 0) },
+        @ViewBuilder content: @escaping (_ isPresented: Bool) -> Popup
     ) -> some View {
         modifier(
             PopupModifier(
                 isPresented: isPresented,
                 duration: duration.nanoseconds,
                 animation: animation,
-                popup: popup,
+                popup: content,
                 background: background
             )
         )
@@ -111,15 +111,15 @@ public extension View {
         isPresented: Binding<Bool>,
         duration: Duration = .seconds(0.35),
         animation: Animation = .spring(duration: 0.3, bounce: 0.25, blendDuration: 0.1),
-        @ViewBuilder popup: @escaping () -> Popup,
-        @ViewBuilder background: @escaping (_ isPresented: Bool) -> Background = { Color.black.opacity($0 ? 0.5 : 0) }
+        @ViewBuilder background: @escaping (_ isPresented: Bool) -> Background = { Color.black.opacity($0 ? 0.5 : 0) },
+        @ViewBuilder content: @escaping () -> Popup
     ) -> some View {
         modifier(
             PopupModifier(
                 isPresented: isPresented,
                 duration: duration.nanoseconds,
                 animation: animation,
-                popup: { _ in popup() },
+                popup: { _ in content() },
                 background: background
             )
         )
