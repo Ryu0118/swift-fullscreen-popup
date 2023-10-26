@@ -60,6 +60,29 @@ You can also customize the background view that appears behind the popup. By def
 }
 ```
 
+### Item-based Presentation
+With item-based presentation, you can display a popup based on an object that conforms to the Identifiable and Equatable protocols. This is particularly useful when you have a list of items and you want to present a popup for a specific item when it is selected.
+
+Here’s how you can use it:
+
+```Swift
+public struct ContentView: View {
+    @State private var selectedItem: Item? = nil
+    public var body: some View {
+        List(items) { item in
+            Text(item.name)
+                .onTapGesture {
+                    selectedItem = item
+                }
+        }
+        .popup(item: $selectedItem) { item in
+            // Your custom popup content based on the selected item
+        }
+    }
+}
+```
+
+
 ## Installation
 ```Swift
 let package = Package(
