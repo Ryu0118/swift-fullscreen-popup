@@ -18,6 +18,80 @@ extension View {
             )
         )
     }
+
+    func animatableFullScreenCover<Item: Identifiable & Equatable>(
+        item: Binding<Item?>,
+        duration nanoseconds: UInt64,
+        content: @escaping (Item) -> some View,
+        onAppear: @escaping () -> Void,
+        onDisappear: @escaping () -> Void
+    ) -> some View {
+        modifier(
+            AnimatableFullScreenItemViewModifier(
+                item: item,
+                duration: nanoseconds,
+                fullScreenContent: content,
+                onAppear: onAppear,
+                onDisappear: onDisappear
+            )
+        )
+    }
+}
+
+private struct AnimatableFullScreenItemViewModifier<FullScreenContent: View, Item: Identifiable & Equatable>: ViewModifier {
+    @Binding var isUserInstructToPresentItem: Item?
+    @State var isActualPresented: Item?
+
+    let nanoseconds: UInt64
+    let fullScreenContent: (Item) -> (FullScreenContent)
+    let onAppear: () -> Void
+    let onDisappear: () -> Void
+
+    init(
+        item: Binding<Item?>,
+        duration nanoseconds: UInt64,
+        fullScreenContent: @escaping (Item) -> FullScreenContent,
+        onAppear: @escaping () -> Void,
+        onDisappear: @escaping () -> Void
+    ) {
+        self._isUserInstructToPresentItem = item
+        self.nanoseconds = nanoseconds
+        self.fullScreenContent = fullScreenContent
+        self.onAppear = onAppear
+        self.onDisappear = onDisappear
+        self.isActualPresented = item.wrappedValue
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .onChange(of: isUserInstructToPresentItem) { isUserInstructToPresent in
+                UIView.setAnimationsEnabled(false)
+                if isUserInstructToPresent != nil {
+                    isActualPresented = isUserInstructToPresent
+                } else {
+                    Task {
+                        try await Task.sleep(nanoseconds: nanoseconds)
+                        isActualPresented = isUserInstructToPresent
+                    }
+                }
+            }
+            .fullScreenCover(item: $isActualPresented) { item in
+                fullScreenContent(item)
+                    .background(BackgroundTransparentView())
+                    .onAppear {
+                        if !UIView.areAnimationsEnabled {
+                            UIView.setAnimationsEnabled(true)
+                            onAppear()
+                        }
+                    }
+                    .onDisappear {
+                        if !UIView.areAnimationsEnabled {
+                            UIView.setAnimationsEnabled(true)
+                            onDisappear()
+                        }
+                    }
+            }
+    }
 }
 
 private struct AnimatableFullScreenViewModifier<FullScreenContent: View>: ViewModifier {
@@ -57,25 +131,22 @@ private struct AnimatableFullScreenViewModifier<FullScreenContent: View>: ViewMo
                     }
                 }
             }
-            .fullScreenCover(
-                isPresented: $isActualPresented,
-                content: {
-                    fullScreenContent()
-                        .background(BackgroundTransparentView())
-                        .onAppear {
-                            if !UIView.areAnimationsEnabled {
-                                UIView.setAnimationsEnabled(true)
-                                onAppear()
-                            }
+            .fullScreenCover(isPresented: $isActualPresented) {
+                fullScreenContent()
+                    .background(BackgroundTransparentView())
+                    .onAppear {
+                        if !UIView.areAnimationsEnabled {
+                            UIView.setAnimationsEnabled(true)
+                            onAppear()
                         }
-                        .onDisappear {
-                            if !UIView.areAnimationsEnabled {
-                                UIView.setAnimationsEnabled(true)
-                                onDisappear()
-                            }
+                    }
+                    .onDisappear {
+                        if !UIView.areAnimationsEnabled {
+                            UIView.setAnimationsEnabled(true)
+                            onDisappear()
                         }
-                }
-            )
+                    }
+            }
     }
 }
 
