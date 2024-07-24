@@ -5,6 +5,7 @@ extension View {
     func animatableFullScreenCover(
         isPresented: Binding<Bool>,
         duration nanoseconds: UInt64,
+        delay: UInt64? = nil,
         content: @escaping () -> some View,
         onAppear: @escaping () -> Void,
         onDisappear: @escaping () -> Void
@@ -13,6 +14,7 @@ extension View {
             AnimatableFullScreenViewModifier(
                 isPresented: isPresented,
                 duration: nanoseconds,
+                delay: delay,
                 fullScreenContent: content,
                 onAppear: onAppear,
                 onDisappear: onDisappear
@@ -23,6 +25,7 @@ extension View {
     func animatableFullScreenCover<Item: Identifiable & Equatable>(
         item: Binding<Item?>,
         duration nanoseconds: UInt64,
+        delay: UInt64? = nil,
         content: @escaping (Item) -> some View,
         onAppear: @escaping () -> Void,
         onDisappear: @escaping () -> Void
@@ -31,6 +34,7 @@ extension View {
             AnimatableFullScreenItemViewModifier(
                 item: item,
                 duration: nanoseconds,
+                delay: delay,
                 fullScreenContent: content,
                 onAppear: onAppear,
                 onDisappear: onDisappear
@@ -44,6 +48,7 @@ private struct AnimatableFullScreenItemViewModifier<FullScreenContent: View, Ite
     @State var isActualPresented: Item?
 
     let nanoseconds: UInt64
+    let delay: UInt64?
     let fullScreenContent: (Item) -> (FullScreenContent)
     let onAppear: () -> Void
     let onDisappear: () -> Void
@@ -51,12 +56,14 @@ private struct AnimatableFullScreenItemViewModifier<FullScreenContent: View, Ite
     init(
         item: Binding<Item?>,
         duration nanoseconds: UInt64,
+        delay: UInt64?,
         fullScreenContent: @escaping (Item) -> FullScreenContent,
         onAppear: @escaping () -> Void,
         onDisappear: @escaping () -> Void
     ) {
         self._isUserInstructToPresentItem = item
         self.nanoseconds = nanoseconds
+        self.delay = delay
         self.fullScreenContent = fullScreenContent
         self.onAppear = onAppear
         self.onDisappear = onDisappear
@@ -68,7 +75,14 @@ private struct AnimatableFullScreenItemViewModifier<FullScreenContent: View, Ite
             .onChange(of: isUserInstructToPresentItem) { isUserInstructToPresent in
                 UIView.setAnimationsEnabled(false)
                 if isUserInstructToPresent != nil {
-                    isActualPresented = isUserInstructToPresent
+                    if let delay {
+                        Task {
+                            try await Task.sleep(nanoseconds: delay)
+                            isActualPresented = isUserInstructToPresent
+                        }
+                    } else {
+                        isActualPresented = isUserInstructToPresent
+                    }
                 } else {
                     Task {
                         try await Task.sleep(nanoseconds: nanoseconds)
@@ -100,6 +114,7 @@ private struct AnimatableFullScreenViewModifier<FullScreenContent: View>: ViewMo
     @State var isActualPresented: Bool
 
     let nanoseconds: UInt64
+    let delay: UInt64?
     let fullScreenContent: () -> (FullScreenContent)
     let onAppear: () -> Void
     let onDisappear: () -> Void
@@ -107,12 +122,14 @@ private struct AnimatableFullScreenViewModifier<FullScreenContent: View>: ViewMo
     init(
         isPresented: Binding<Bool>,
         duration nanoseconds: UInt64,
+        delay: UInt64?,
         fullScreenContent: @escaping () -> FullScreenContent,
         onAppear: @escaping () -> Void,
         onDisappear: @escaping () -> Void
     ) {
         self._isUserInstructToPresent = isPresented
         self.nanoseconds = nanoseconds
+        self.delay = delay
         self.fullScreenContent = fullScreenContent
         self.onAppear = onAppear
         self.onDisappear = onDisappear
@@ -124,7 +141,14 @@ private struct AnimatableFullScreenViewModifier<FullScreenContent: View>: ViewMo
             .onChange(of: isUserInstructToPresent) { isUserInstructToPresent in
                 UIView.setAnimationsEnabled(false)
                 if isUserInstructToPresent {
-                    isActualPresented = isUserInstructToPresent
+                    if let delay {
+                        Task {
+                            try await Task.sleep(nanoseconds: delay)
+                            isActualPresented = isUserInstructToPresent
+                        }
+                    } else {
+                        isActualPresented = isUserInstructToPresent
+                    }
                 } else {
                     Task {
                         try await Task.sleep(nanoseconds: nanoseconds)
