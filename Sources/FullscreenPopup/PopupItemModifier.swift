@@ -11,12 +11,14 @@ struct PopupItemModifier<Popup: View, Background: View, Item: Identifiable & Equ
 
     let animation: Animation
     let duration: UInt64
+    let delay: UInt64?
     let popup: (Item) -> Popup
     let background: (Bool) -> Background
 
     init(
         item: Binding<Item?>,
         duration nanoseconds: UInt64,
+        delay: UInt64? = nil,
         animation: Animation,
         @ViewBuilder popup: @escaping (_ item: Item) -> Popup,
         @ViewBuilder background: @escaping (_ isPresented: Bool) -> Background
@@ -25,6 +27,7 @@ struct PopupItemModifier<Popup: View, Background: View, Item: Identifiable & Equ
         self._isUserInstructToPresent = item
         self._item = item
         self.duration = nanoseconds
+        self.delay = delay
         self.animation = animation
         self.popup = popup
         self.background = background
@@ -33,7 +36,8 @@ struct PopupItemModifier<Popup: View, Background: View, Item: Identifiable & Equ
     func body(content: Content) -> some View {
         content.animatableFullScreenCover(
             item: $isUserInstructToPresent,
-            duration: duration
+            duration: duration,
+            delay: delay
         ) { item in
             popup(item)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

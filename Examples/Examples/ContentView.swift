@@ -4,7 +4,8 @@ import FullscreenPopup
 struct ContentView: View {
     @State var isExample1Presented = false
     @State var isExample2Presented = false
-    @State var example3Item: MyItem?
+    @State var isExample3Presented = false
+    @State var example4Item: MyItem?
 
     var body: some View {
         Color.white
@@ -24,9 +25,15 @@ struct ContentView: View {
                         }
 
                         Button {
-                            example3Item = .init(id: UUID())
+                            isExample3Presented = true
                         } label: {
-                            Text("Show Alert 3")
+                            Text("Show Delay Alert 3")
+                        }
+
+                        Button {
+                            example4Item = .init(id: UUID())
+                        } label: {
+                            Text("Show Alert 4")
                         }
                     }
                     .navigationTitle("Title")
@@ -34,11 +41,14 @@ struct ContentView: View {
                     .popup(isPresented: $isExample1Presented) {
                         Example1Alert(isPresented: $isExample1Presented)
                     }
-                    .popup(item: $example3Item) { item in
+                    .popup(isPresented: $isExample3Presented, delay: .seconds(1)) {
+                        Example1Alert(isPresented: $isExample3Presented)
+                    }
+                    .popup(item: $example4Item) { item in
                         VStack {
                             Text(item.id.uuidString)
                             Button {
-                                example3Item = nil
+                                example4Item = nil
                             } label: {
                                 Text("Close")
                             }
