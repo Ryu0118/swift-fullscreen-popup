@@ -82,6 +82,16 @@ public struct ContentView: View {
 }
 ```
 
+### Adding Delay
+The delay parameter allows you to specify a delay before the popup is presented. This can be useful for coordinating the popup presentation with other UI animations or actions. Here's an example of how to use it:
+
+```Swift
+.popup(isPresented: $isPopupPresented, delay: .seconds(0.3)) {
+    // Your custom popup content
+}
+```
+In this example, the popup will appear with a 0.3-second delay after the triggering event.
+
 
 ## Installation
 ```Swift
