@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 extension View {
     func animatableFullScreenCover(
@@ -163,5 +164,4 @@ private struct BackgroundTransparentView: UIViewRepresentable {
             superview?.superview?.backgroundColor = .clear
         }
     }
-
 }
