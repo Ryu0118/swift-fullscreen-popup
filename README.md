@@ -99,7 +99,7 @@ let package = Package(
     name: "YourProject",
     ...
     dependencies: [
-        .package(url: "https://github.com/Ryu0118/swift-fullscreen-popup", exact: "0.1.0")
+        .package(url: "https://github.com/Ryu0118/swift-fullscreen-popup", exact: "0.3.0")
     ],
     targets: [
         .target(
