@@ -46,6 +46,7 @@ extension View {
 private struct AnimatableFullScreenItemViewModifier<FullScreenContent: View, Item: Identifiable & Equatable>: ViewModifier {
     @Binding var isUserInstructToPresentItem: Item?
     @State var isActualPresented: Item?
+    @State private var didSuppressAnimation = false
 
     let nanoseconds: UInt64
     let delay: UInt64?
@@ -73,6 +74,15 @@ private struct AnimatableFullScreenItemViewModifier<FullScreenContent: View, Ite
     func body(content: Content) -> some View {
         content
             .onChange(of: isUserInstructToPresentItem) { isUserInstructToPresent in
+                // `UIView.setAnimationsEnabled` is process-global. When multiple
+                // `.popup(item:)` modifiers are stacked on the same view hierarchy,
+                // toggling it from an unguarded `onChange` here races with the other
+                // instances: one modifier can re-disable it before another instance's
+                // `onAppear`/`onDisappear` gets a chance to see it re-enabled, so that
+                // instance's completion handler (and the view it presents) never
+                // receives the expected callback. Guard with a modifier-local flag so
+                // only the instance that actually disabled animations re-enables them.
+                didSuppressAnimation = true
                 UIView.setAnimationsEnabled(false)
                 if isUserInstructToPresent != nil {
                     if let delay {
@@ -94,13 +104,15 @@ private struct AnimatableFullScreenItemViewModifier<FullScreenContent: View, Ite
                 fullScreenContent(item)
                     .background(BackgroundTransparentView())
                     .onAppear {
-                        if !UIView.areAnimationsEnabled {
+                        if didSuppressAnimation {
+                            didSuppressAnimation = false
                             UIView.setAnimationsEnabled(true)
                             onAppear()
                         }
                     }
                     .onDisappear {
-                        if !UIView.areAnimationsEnabled {
+                        if didSuppressAnimation {
+                            didSuppressAnimation = false
                             UIView.setAnimationsEnabled(true)
                             onDisappear()
                         }
@@ -112,6 +124,7 @@ private struct AnimatableFullScreenItemViewModifier<FullScreenContent: View, Ite
 private struct AnimatableFullScreenViewModifier<FullScreenContent: View>: ViewModifier {
     @Binding var isUserInstructToPresent: Bool
     @State var isActualPresented: Bool
+    @State private var didSuppressAnimation = false
 
     let nanoseconds: UInt64
     let delay: UInt64?
@@ -139,6 +152,10 @@ private struct AnimatableFullScreenViewModifier<FullScreenContent: View>: ViewMo
     func body(content: Content) -> some View {
         content
             .onChange(of: isUserInstructToPresent) { isUserInstructToPresent in
+                // See the matching comment in `AnimatableFullScreenItemViewModifier`:
+                // guard the process-global animation toggle with a modifier-local flag
+                // so stacked `.popup` modifiers don't race on `UIView.setAnimationsEnabled`.
+                didSuppressAnimation = true
                 UIView.setAnimationsEnabled(false)
                 if isUserInstructToPresent {
                     if let delay {
@@ -160,13 +177,15 @@ private struct AnimatableFullScreenViewModifier<FullScreenContent: View>: ViewMo
                 fullScreenContent()
                     .background(BackgroundTransparentView())
                     .onAppear {
-                        if !UIView.areAnimationsEnabled {
+                        if didSuppressAnimation {
+                            didSuppressAnimation = false
                             UIView.setAnimationsEnabled(true)
                             onAppear()
                         }
                     }
                     .onDisappear {
-                        if !UIView.areAnimationsEnabled {
+                        if didSuppressAnimation {
+                            didSuppressAnimation = false
                             UIView.setAnimationsEnabled(true)
                             onDisappear()
                         }
